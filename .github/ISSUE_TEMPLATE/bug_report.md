@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: 'Bug #1, #2, etc. -- summary'
-labels: bug
-assignees: MJP8
+labels: bug, help wanted
+assignees: elijahparker, MJP8
 
 ---
 
