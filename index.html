@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body {
+            background-image: url('img/background.png');
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game_over w3-center">
+        <header>
+            <h1>You lose</h1>
+        </header>
+    </div>
+    <div class="win w3-center">
+        <header>
+            <h1>You win!</h1>
+        </header>
+        <img src="img/trophy.png" class="w3-spin" width="200px" />
+    </div>
+    <div class="game">
+        <img src="img/treasure.png" class="treasure" width="500rem" style="padding-top: 100px;" />
+        <img src="img/player.png" width="45px" class="player" />
+        <img src="img/enemy.png" width="45px" class="enemy" />
+    </div>
+    <script src="jquery.min.js"></script>
+    <script src="js/game.js"></script>
+</body>
+
+</html>
