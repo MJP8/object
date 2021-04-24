@@ -11,6 +11,22 @@
             background-image: url('img/background.png');
             background-size: cover;
         }
+        
+        .enemy {
+            background-image: url('img/enemy.png');
+            background-size: cover;
+            width: 36px;
+            position: absolute;
+            height: 36px;
+        }
+        
+        .player {
+            background-image: url('img/player.png');
+            background-size: cover;
+            width: 36px;
+            position: absolute;
+            height: 36px;
+        }
     </style>
 </head>
 
@@ -28,12 +44,8 @@
     </div>
     <div class="game">
         <img src="img/treasure.png" class="treasure" width="500rem" style="padding-top: 100px;" />
-        <div class="player">
-            <img src="img/player.png" width="45px" />
-        </div>
-        <div class="enemy">
-            <img src="img/enemy.png" width="45px" />
-        </div>
+        <div class="player"></div>
+        <div class="enemy"></div>
     </div>
     <script src="jquery.min.js"></script>
     <script src="js/game.js"></script>

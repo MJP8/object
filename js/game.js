@@ -21,9 +21,9 @@ class Enemy { // create a enemy sprite class
         this.moveToY = Math.round(Math.random() * $(window).height()); // create a random y  for the enemy to move to
         this.checkVisibility = function() { // create a method to check its visiblity
             if (this.visibility == 0) { // if the visibility is 0...
-                $('.enemy').html('<img src="img/transparent_enemy.png" />'); // then use JQuery to set the code inside to a different image
+                $('.enemy').css('background-image', 'url("img/transparent_enemy.png")'); // then use JQuery to set the code inside to a different image
             } else { // otherwise...
-                $('.enemy').html('<img src="img/enemy.png" />'); // then use JQuery to set the code inside it to the default image 
+                $('.enemy').css('background-image', 'url("img/enemy.png")'); // then use JQuery to set the code inside it to the default image 
             };
         };
         this.move = function() { // create a method to move the enemy
