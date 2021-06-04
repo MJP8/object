@@ -8,6 +8,8 @@
 </head>
 
 <body>
+    <div class="game"></div>
+    <script src="jquery.min.js"></script>
     <script src="game.js"></script>
 </body>
 
