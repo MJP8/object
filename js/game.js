@@ -91,49 +91,72 @@
 //     move(); // call the move function
 // }, 1010);
 window.onload = function() {
-    setup("background", "treasure", "Pass the enemy");
+    setup("Pass the enemy");
 }
 
-function setup(id01, id02, title) {
+function setup(title) {
     document.title = title;
-    var c = document.getElementById("canvas");
-    width = c.width = window.innerWidth;
-    height = c.height = window.innerHeight;
-    var ctx = c.getContext("2d");
-    var img = document.getElementById(id01);
-    ctx.drawImage(img, 0, 0, width, height);
-    img = document.getElementById(id02);
-    ctx.drawImage(img, 20, 100, width / 5 * 2, height / 5 * 2);
-    const player = new Player(100, width);
-    player.createSprite(ctx, height);
-    const enemy = new Enemy(100, width);
-    enemy.createSprite(ctx, height);
+    const canvas = new Canvas();
+    canvas.start_game();
+    setTimeout(function() {
+        canvas.player.move(0, 100, canvas.c);
+    }, 1000);
 }
-
+class Canvas {
+    constructor() {
+        this.canvas = document.getElementById("canvas");
+        this.width = this.canvas.width = window.innerWidth;
+        this.height = this.canvas.height = window.innerHeight;
+        this.c = this.canvas.getContext("2d");
+        // var img = document.getElementById(id01);
+        // ctx.drawImage(img, 0, 0, width, height);
+        // img = document.getElementById(id02);
+        // ctx.drawImage(img, width - (width / 4.5 * 2), 100, width / 5 * 2, height / 5 * 2);
+        // enemy.move(ctx);
+        this.player = new Player(50, 50, 100);
+        this.enemy = new Enemy(250, 50, 100);
+        this.sprites = [this.player, this.enemy];
+    }
+    start_game() {
+        this.player.draw_sprite(this.c);
+        this.enemy.draw_sprite(this.c);
+    }
+}
 class Sprite {
-    constructor(color, size, width) {
+    constructor(color, x, y, size) {
         this.color = color;
         this.size = size;
-        this.width = width;
-        this.x = this.width / 2;
-        this.createSprite = function(ctx, height) {
-            ctx.beginPath();
-            ctx.arc(this.x, height - this.size, this.size / 2, 0, 2 * Math.PI);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-        }
+        this.x = x;
+        this.y = y;
+    }
+    draw_sprite(c = document.getElementById("canvas").getContext("2d")) {
+        c.beginPath();
+        c.arc(this.x, this.y, this.size / 2, 0, 2 * Math.PI);
+        c.fillStyle = this.color;
+        c.fill();
+    }
+    move(x_increment, y_increment, c) {
+        c.clearRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+        this.x += x_increment;
+        this.y += y_increment;
+        this.draw_sprite(c);
     }
 }
 
 class Player extends Sprite {
-    constructor(size, width) {
-        super("blue", size, width);
-        this.x = this.size / 2 + 5;
+    constructor(x, y, size) {
+        super("blue", x, y, size);
     }
 }
 
 class Enemy extends Sprite {
-    constructor(size, width) {
-        super("black", size, width);
+    constructor(x, y, size) {
+        super("black", x, y, size);
+        this.move = function(ctx) {
+            for (let i = this.x; i < (this.x + 100); i++) {
+                this.x = i;
+                this.createSprite(ctx, window.innerHeight);
+            }
+        }
     }
 }
