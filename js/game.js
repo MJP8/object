@@ -43,28 +43,28 @@
 //                 win(); // then call the win function
 //             };
 //         }, 1000); // do this each second
-//         $(document).on('keydown', function(event) { // if a key is pressed...
-//             if (event.which === 39) { // then if the key the right arrow key...
-//                 $('.player').animate({ // then animate it with JQuery...
-//                     left: `+=${$('.player').width() * 3}`
-//                 }, 'slow'); // and do it slowly
-//             } else if (event.which === 37) { // otherwise if the key is the left arrow key...
-//                 $('.player').animate({ // then animate it with JQuery...
-//                     left: `-=${$('.player').width() * 3}`
-//                 }, 'slow'); // and do it slowly
-//             } else if (event.which === 38) { // otherwise if it is the up arrow key...
-//                 $('.player').animate({ // then animate it with JQuery...
-//                     top: `-=${$('.player').width() * 10}`
-//                 }, 'slow'); // and do it slowly
-//                 if (Math.abs(parseInt($('.player').css('top')) - parseInt($('.treasure').css('top'))) < parseInt($('.treasure').height()) && Math.abs($('.player').css('left') - $('.treasure').css('left')) < $('.treasure').width()) { // if the player is touching the treasure...
-//                     win(); // then call the win function
-//                 }
-//                 $('.player').animate({ // animate it with JQuery again...
-//                     top: `+=${$('.player').width() * 10}`
-//                 }, 'slow'); // and do it slowly
-//             };
-//             event.preventDefault();
-//         });
+// $(document).on('keydown', function(event) { // if a key is pressed...
+//     if (event.which === 39) { // then if the key the right arrow key...
+//         $('.player').animate({ // then animate it with JQuery...
+//             left: `+=${$('.player').width() * 3}`
+//         }, 'slow'); // and do it slowly
+//     } else if (event.which === 37) { // otherwise if the key is the left arrow key...
+//         $('.player').animate({ // then animate it with JQuery...
+//             left: `-=${$('.player').width() * 3}`
+//         }, 'slow'); // and do it slowly
+//     } else if (event.which === 38) { // otherwise if it is the up arrow key...
+//         $('.player').animate({ // then animate it with JQuery...
+//             top: `-=${$('.player').width() * 10}`
+//         }, 'slow'); // and do it slowly
+//         if (Math.abs(parseInt($('.player').css('top')) - parseInt($('.treasure').css('top'))) < parseInt($('.treasure').height()) && Math.abs($('.player').css('left') - $('.treasure').css('left')) < $('.treasure').width()) { // if the player is touching the treasure...
+//             win(); // then call the win function
+//         }
+//         $('.player').animate({ // animate it with JQuery again...
+//             top: `+=${$('.player').width() * 10}`
+//         }, 'slow'); // and do it slowly
+//     };
+//     event.preventDefault();
+// });
 //         this.checkVisibility = function() { // create a method to check its visiblity
 //             if (this.visibility == 0) { // if the visibility is 0...
 //                 $('.player').html('<img src=\'img/transparent_player.png\' />'); // then use JQuery to set the code inside to a different image
@@ -95,13 +95,14 @@ window.onload = function() {
     setup("Pass the enemy");
 }
 
+function pause(ms) {
+    const now = new Date;
+}
+
 function setup(title) {
     document.title = title;
     const canvas = new Canvas();
     canvas.start_game();
-    setTimeout(function() {
-        //canvas.player.move(0, 100, canvas.c);
-    }, 1000);
 }
 class Canvas {
     constructor() {
@@ -117,11 +118,13 @@ class Canvas {
         this.player = new Player(50, 400, 100);
         this.enemy = new Enemy(900, 400, 100);
         this.sprites = [this.player, this.enemy];
+
     }
     start_game() {
         this.player.draw_sprite(this.c);
         this.enemy.draw_sprite(this.c);
-        this.enemy.guard(this.c);
+        this.player.check_keys(this.c, this.enemy);
+        this.enemy.guard(this.c, this.player);
     }
 }
 class Sprite {
@@ -137,11 +140,12 @@ class Sprite {
         c.fillStyle = this.color;
         c.fill();
     }
-    move(x_increment, y_increment, c) {
+    move(x_increment, y_increment, c, sprite) {
         c.clearRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
         this.x += x_increment;
         this.y += y_increment;
         this.draw_sprite(c);
+        sprite.draw_sprite(c);
     }
 }
 
@@ -149,26 +153,78 @@ class Player extends Sprite {
     constructor(x, y, size) {
         super("green", x, y, size);
     }
+    check_keys(c, sprite) {
+        $(document).on('keydown', (event) => {
+            if (event.which == 39) {
+                this.move(10, 0, c, sprite);
+            } else if (event.which == 37) {
+                this.move(-10, 0, c, sprite);
+            } else if (event.which === 38) { // otherwise if it is the up arrow key...
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        this.move(0, -5, c, sprite);
+                    }, 30);
+                }
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        this.move(0, 5, c, sprite);
+                    }, 30);
+                }
+            } else if (event.which === 38 && event.which === 39) {
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        this.move(0, -1, c, sprite);
+                    }, 30);
+                }
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        this.move(1, 0, c, sprite);
+                    }, 30);
+                }
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        this.move(0, 1, c, sprite);
+                    }, 30);
+                }
+            } else if (event.which === 38 && event.which === 37) {
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        this.move(0, -1, c, sprite);
+                    }, 30);
+                }
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        this.move(-1, 0, c, sprite);
+                    }, 30);
+                }
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        this.move(0, 1, c, sprite);
+                    }, 30);
+                }
+            }
+        });
+    }
 }
 
 class Enemy extends Sprite {
     constructor(x, y, size) {
         super("black", x, y, size);
     }
-    guard(c) {
+    guard(c, sprite) {
         let down = true;
-        let speed = 1;
+        let speed = 10;
         setInterval(() => {
             if (down) {
-                this.move(0, speed, c);
+                this.move(0, speed, c, sprite);
             } else {
-                this.move(0, 0 - speed, c);
+                this.move(0, 0 - speed, c, sprite);
             }
             if (this.y >= 585) {
                 down = false;
             } else if (this.y <= 50) {
                 down = true;
             }
-        }, 0);
+        }, 30);
     }
 }
