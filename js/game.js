@@ -1,3 +1,4 @@
+"use strict";
 // function move() { // create a function to make the enemy move
 //     enemy.move(); // call the enemy object's move method
 //     enemy.moveToX = Math.round(Math.random() * ($(window).width() - text_object.width)); // add a random x for the enemy to move to
@@ -99,7 +100,7 @@ function setup(title) {
     const canvas = new Canvas();
     canvas.start_game();
     setTimeout(function() {
-        canvas.player.move(0, 100, canvas.c);
+        //canvas.player.move(0, 100, canvas.c);
     }, 1000);
 }
 class Canvas {
@@ -113,13 +114,14 @@ class Canvas {
         // img = document.getElementById(id02);
         // ctx.drawImage(img, width - (width / 4.5 * 2), 100, width / 5 * 2, height / 5 * 2);
         // enemy.move(ctx);
-        this.player = new Player(50, 50, 100);
-        this.enemy = new Enemy(250, 50, 100);
+        this.player = new Player(50, 400, 100);
+        this.enemy = new Enemy(900, 400, 100);
         this.sprites = [this.player, this.enemy];
     }
     start_game() {
         this.player.draw_sprite(this.c);
         this.enemy.draw_sprite(this.c);
+        this.enemy.guard(this.c);
     }
 }
 class Sprite {
@@ -145,18 +147,28 @@ class Sprite {
 
 class Player extends Sprite {
     constructor(x, y, size) {
-        super("blue", x, y, size);
+        super("green", x, y, size);
     }
 }
 
 class Enemy extends Sprite {
     constructor(x, y, size) {
         super("black", x, y, size);
-        this.move = function(ctx) {
-            for (let i = this.x; i < (this.x + 100); i++) {
-                this.x = i;
-                this.createSprite(ctx, window.innerHeight);
+    }
+    guard(c) {
+        let down = true;
+        let speed = 1;
+        setInterval(() => {
+            if (down) {
+                this.move(0, speed, c);
+            } else {
+                this.move(0, 0 - speed, c);
             }
-        }
+            if (this.y >= 585) {
+                down = false;
+            } else if (this.y <= 50) {
+                down = true;
+            }
+        }, 0);
     }
 }
