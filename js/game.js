@@ -95,14 +95,18 @@ window.onload = function() {
     setup("Pass the enemy");
 }
 
-function pause(ms) {
-    const now = new Date;
-}
-
 function setup(title) {
     document.title = title;
+    console.log(Math.sqrt(3 * 3 + 4 * 4));
     const canvas = new Canvas();
-    canvas.start_game();
+    canvas.background.draw();
+    canvas.c.font = "50px monospace";
+    canvas.c.fillText("Use the left and right arrow keys to", 50, 50);
+    canvas.c.fillText("pass the enemy.", 50, 150);
+    setTimeout(() => {
+        canvas.c.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.start_game();
+    }, 2000);
 }
 class Canvas {
     constructor() {
@@ -115,16 +119,32 @@ class Canvas {
         // img = document.getElementById(id02);
         // ctx.drawImage(img, width - (width / 4.5 * 2), 100, width / 5 * 2, height / 5 * 2);
         // enemy.move(ctx);
+        this.background = new Background();
         this.player = new Player(50, 400, 100);
         this.enemy = new Enemy(900, 400, 100);
         this.sprites = [this.player, this.enemy];
 
     }
     start_game() {
+        this.background.draw();
         this.player.draw_sprite(this.c);
         this.enemy.draw_sprite(this.c);
         this.player.check_keys(this.c, this.enemy);
         this.enemy.guard(this.c, this.player);
+    }
+}
+class Background {
+    constructor() {
+        this.canvas = document.getElementById("background");
+        this.width = this.canvas.width = window.innerWidth;
+        this.height = this.canvas.height = window.innerHeight;
+        this.c = this.canvas.getContext("2d");
+    }
+    draw() {
+        this.c.fillStyle = "#44e0ff";
+        this.c.fillRect(0, 0, this.width, this.height);
+        this.c.fillStyle = "#555555";
+        this.c.fillRect(0, 450, this.width, this.height - 450);
     }
 }
 class Sprite {
@@ -146,6 +166,37 @@ class Sprite {
         this.y += y_increment;
         this.draw_sprite(c);
         sprite.draw_sprite(c);
+        if (this.is_touching(sprite) && this.color == "green") {
+            this.color = "black";
+            this.draw_sprite(c);
+        }
+    }
+    is_touching(sprite) {
+        let a;
+        let b;
+        let c;
+        if (this.x > sprite.x) {
+            a = this.x - sprite.x;
+        } else {
+            a = sprite.x - this.x;
+        }
+        if (this.y > sprite.y) {
+            b = this.y - sprite.y;
+        } else {
+            b = sprite.y - this.y;
+        }
+        c = Math.sqrt(a * a + b * b);
+        let size;
+        if (this.size >= sprite.size) {
+            size = this.size;
+        } else {
+            size = sprite.size;
+        }
+        if (c < size) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

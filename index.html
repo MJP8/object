@@ -11,17 +11,24 @@
             overflow: hidden;
         }
         
+        #background {
+            position: absolute;
+        }
+        
         #canvas {
             width: 100%;
             height: 100%;
+            position: absolute;
         }
         
         .hidden {
             display: none;
         }
         
-        #game {
+        #game,
+        #canvas {
             padding: 0px;
+            margin: 0px;
         }
     </style>
 </head>
@@ -42,6 +49,7 @@
         <!-- <img src="img/treasure.png" id="treasure" width="500rem" style="padding-top: 100px;" />
         <div id="player"></div>
         <div id="enemy"></div> -->
+        <canvas id="background"></canvas>
         <canvas id="canvas"></canvas>
     </div>
     <!-- <img src="img/background.png" id="background" class="hidden" />
