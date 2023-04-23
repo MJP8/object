@@ -94,6 +94,8 @@
 window.onload = function() {
     setup("Pass the enemy");
 }
+const event_lose = new CustomEvent("endgame", { detail: { name: "lose" }, });
+const event_win = new CustomEvent("endgame", { detail: { name: "win" }, });
 
 function setup(title) {
     document.title = title;
@@ -108,6 +110,7 @@ function setup(title) {
         canvas.start_game();
     }, 2000);
 }
+const obj = new EventTarget();
 class Canvas {
     constructor() {
         this.canvas = document.getElementById("canvas");
@@ -123,7 +126,10 @@ class Canvas {
         this.player = new Player(50, 400, 100);
         this.enemy = new Enemy(900, 400, 100);
         this.sprites = [this.player, this.enemy];
-
+        obj.addEventListener("endgame", () => {
+            this.c.font = "50px monospace";
+            this.c.fillText("Game Over", 50, 50);
+        });
     }
     start_game() {
         this.background.draw();
@@ -153,6 +159,11 @@ class Sprite {
         this.size = size;
         this.x = x;
         this.y = y;
+        this.on = true;
+        let self = this;
+        obj.addEventListener("endgame", () => {
+            self.on = false;
+        });
     }
     draw_sprite(c = document.getElementById("canvas").getContext("2d")) {
         c.beginPath();
@@ -161,14 +172,17 @@ class Sprite {
         c.fill();
     }
     move(x_increment, y_increment, c, sprite) {
-        c.clearRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
-        this.x += x_increment;
-        this.y += y_increment;
-        this.draw_sprite(c);
-        sprite.draw_sprite(c);
-        if (this.is_touching(sprite) && this.color == "green") {
-            this.color = "black";
+        if (this.on) {
+            c.clearRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+            this.x += x_increment;
+            this.y += y_increment;
             this.draw_sprite(c);
+            sprite.draw_sprite(c);
+            if (this.is_touching(sprite) && this.color == "black") {
+                sprite.color = "black";
+                sprite.draw_sprite(c);
+                obj.dispatchEvent(event_lose);
+            }
         }
     }
     is_touching(sprite) {
