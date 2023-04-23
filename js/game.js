@@ -96,12 +96,13 @@ window.onload = function() {
 }
 const event_lose = new CustomEvent("endgame", { detail: { name: "lose" }, });
 const event_win = new CustomEvent("endgame", { detail: { name: "win" }, });
+let draw;
 
 function setup(title) {
     document.title = title;
-    console.log(Math.sqrt(3 * 3 + 4 * 4));
     const canvas = new Canvas();
-    canvas.background.draw();
+    draw = () => canvas.draw();
+    draw();
     canvas.c.font = "50px monospace";
     canvas.c.fillText("Use the left and right arrow keys to", 50, 50);
     canvas.c.fillText("pass the enemy.", 50, 150);
@@ -117,12 +118,6 @@ class Canvas {
         this.width = this.canvas.width = window.innerWidth;
         this.height = this.canvas.height = window.innerHeight;
         this.c = this.canvas.getContext("2d");
-        // var img = document.getElementById(id01);
-        // ctx.drawImage(img, 0, 0, width, height);
-        // img = document.getElementById(id02);
-        // ctx.drawImage(img, width - (width / 4.5 * 2), 100, width / 5 * 2, height / 5 * 2);
-        // enemy.move(ctx);
-        this.background = new Background();
         this.player = new Player(50, 400, 100);
         this.enemy = new Enemy(900, 400, 100);
         this.sprites = [this.player, this.enemy];
@@ -132,21 +127,17 @@ class Canvas {
         });
     }
     start_game() {
-        this.background.draw();
-        this.player.draw_sprite(this.c);
-        this.enemy.draw_sprite(this.c);
+        this.draw();
         this.player.check_keys(this.c, this.enemy);
         this.enemy.guard(this.c, this.player);
     }
-}
-class Background {
-    constructor() {
-        this.canvas = document.getElementById("background");
-        this.width = this.canvas.width = window.innerWidth;
-        this.height = this.canvas.height = window.innerHeight;
-        this.c = this.canvas.getContext("2d");
-    }
     draw() {
+        this.draw_background();
+        this.player.draw_sprite(this.c);
+        this.enemy.draw_sprite(this.c);
+        console.log("draw");
+    }
+    draw_background() {
         this.c.fillStyle = "#44e0ff";
         this.c.fillRect(0, 0, this.width, this.height);
         this.c.fillStyle = "#555555";
@@ -170,14 +161,14 @@ class Sprite {
         c.arc(this.x, this.y, this.size / 2, 0, 2 * Math.PI);
         c.fillStyle = this.color;
         c.fill();
+        console.log()
     }
     move(x_increment, y_increment, c, sprite) {
         if (this.on) {
             c.clearRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
             this.x += x_increment;
             this.y += y_increment;
-            this.draw_sprite(c);
-            sprite.draw_sprite(c);
+            draw();
             if (this.is_touching(sprite) && this.color == "black") {
                 sprite.color = "black";
                 sprite.draw_sprite(c);
@@ -224,7 +215,7 @@ class Player extends Sprite {
                 this.move(10, 0, c, sprite);
             } else if (event.which == 37) {
                 this.move(-10, 0, c, sprite);
-            } else if (event.which === 38) { // otherwise if it is the up arrow key...
+            } else if (event.which === 38) {
                 for (let i = 0; i < 50; i++) {
                     setTimeout(() => {
                         this.move(0, -5, c, sprite);
